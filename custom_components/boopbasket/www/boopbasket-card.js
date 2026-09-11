@@ -137,39 +137,29 @@ class BoopBasketCard extends HTMLElement {
 
     const inputContainer = document.createElement('div');
     inputContainer.style.cssText = `
-    position: relative;
     width: 100%;
     margin-bottom: 1em;
   `;
 
-    // Plain <input>, not ha-textfield: ha-textfield is a Home Assistant
-    // custom element that only renders once its module has been lazy-loaded
-    // by the frontend, which isn't guaranteed on every dashboard/panel — an
-    // un-upgraded instance sits in the DOM with no shadow root and reports
-    // zero size everywhere. Same failure class as the ha-dialog/ha-button
-    // issue already worked around in boopbasket-camera.js.
-    this._barcodeField = document.createElement('input');
+    // The real <ha-input appearance="material"> (the same element HA's own
+    // todo-list "Add item" field uses) — CSS approximations of it kept
+    // missing the mark, and unlike ha-textfield/ha-dialog/ha-button (which
+    // genuinely can sit un-upgraded with no shadow root on some panels),
+    // this is core, always-loaded chrome used all over stock HA, same as
+    // ha-icon-button already relied on throughout this card.
+    this._barcodeField = document.createElement('ha-input');
+    this._barcodeField.setAttribute('appearance', 'material');
     this._barcodeField.type = 'text';
     this._barcodeField.placeholder = 'Scan or add barcode';
-    this._barcodeField.className = 'boopbasket-input';
-    this._barcodeField.style.paddingRight = '72px';
+    this._barcodeField.style.width = '100%';
 
-    // Both icon buttons emulate an <ha-input>/<wa-input>-style "end" slot:
-    // small, right-aligned, vertically centered inside the field. Sized to
-    // match the icon buttons used elsewhere in the card (table row actions,
-    // stock stepper) rather than HA's default 48px touch target, which
-    // would overwhelm a compact field like this one.
+    // Light-DOM children with slot="end" are distributed into ha-input's
+    // own end slot and laid out by its internal styles — no manual
+    // absolute positioning needed, unlike the plain-<input> approach this
+    // replaces.
     const quickAddBtn = document.createElement('ha-icon-button');
     quickAddBtn.title = 'Add';
-    quickAddBtn.style.cssText = `
-    position: absolute;
-    right: 36px;
-    top: 50%;
-    transform: translateY(-50%);
-    --mdc-icon-button-size: 28px;
-    pointer-events: auto;
-    z-index: 1;
-  `;
+    quickAddBtn.slot = 'end';
     const plusIcon = document.createElement('ha-icon');
     plusIcon.icon = 'mdi:plus';
     quickAddBtn.appendChild(plusIcon);
@@ -177,21 +167,14 @@ class BoopBasketCard extends HTMLElement {
 
     const scanBtn = document.createElement('ha-icon-button');
     scanBtn.title = 'Scan';
-    scanBtn.style.cssText = `
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    --mdc-icon-button-size: 28px;
-    pointer-events: auto;
-    z-index: 1;
-  `;
+    scanBtn.slot = 'end';
     const cameraIcon = document.createElement('ha-icon');
     cameraIcon.icon = 'mdi:camera';
     scanBtn.appendChild(cameraIcon);
     scanBtn.addEventListener('click', () => BoopBasketCamera.openScanner(this));
 
-    inputContainer.append(this._barcodeField, quickAddBtn, scanBtn);
+    this._barcodeField.append(quickAddBtn, scanBtn);
+    inputContainer.append(this._barcodeField);
 
     this._searchField = document.createElement('input');
     this._searchField.type = 'text';
@@ -208,9 +191,11 @@ class BoopBasketCard extends HTMLElement {
     bulkCount.style.cssText = 'font-size: 0.9em; color: var(--secondary-text-color);';
     bulkCount.textContent = '0 selected';
 
-    // BoopBasketUI.createButton(), not <ha-button>: see the note above on
-    // _barcodeField for why ha-* custom elements can't be relied on to
-    // render when assembled imperatively like this.
+    // BoopBasketUI.createButton(), not <ha-button>: unlike ha-input/
+    // ha-icon-button (core, always-loaded chrome), ha-button/ha-dialog can
+    // genuinely sit un-upgraded with no shadow root when assembled
+    // imperatively like this — see boopbasket-camera.js for where that was
+    // actually hit.
     const bulkDeleteBtn = BoopBasketUI.createButton('Delete Selected', 'danger');
     bulkDeleteBtn.id = 'bulk-delete';
     bulkDeleteBtn.disabled = true;
