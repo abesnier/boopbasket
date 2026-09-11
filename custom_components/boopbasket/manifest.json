@@ -1,0 +1,15 @@
+{
+  "domain": "boopbasket",
+  "name": "Boopbasket",
+  "version": "1.0.0",
+  "config_flow": true,
+  "services": ["services.yaml"],
+  "documentation": "https://github.com/abesnier/boopbasket",
+  "issue_tracker": "https://github.com/abesnier/boopbasket/issues",
+  "requirements": ["aiohttp>=3.8.0", "aiofiles>=23.0.0"],
+  "codeowners": ["@abesnier"],
+  "dependencies": ["todo", "http", "frontend", "lovelace"],
+  "iot_class": "cloud_polling",
+  "integration_type": "service",
+  "single_instance": true
+}

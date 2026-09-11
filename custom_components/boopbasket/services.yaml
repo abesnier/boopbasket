@@ -1,0 +1,83 @@
+add_mapping:
+  name: Add mapping
+  description: >-
+    Add or update a barcode → product mapping. If the resulting stock is at
+    or below the low-stock threshold and a shopping list is linked, the
+    product is automatically added to it (if not already active there).
+  fields:
+    code:
+      name: Barcode
+      description: The barcode/UPC to map.
+      required: true
+      example: "5000112637922"
+      selector:
+        text:
+    product_name:
+      name: Product name
+      description: The product name to associate with this barcode.
+      required: true
+      example: "Coca-Cola 330ml"
+      selector:
+        text:
+    brands:
+      name: Brands
+      description: Optional brand name(s).
+      required: false
+      selector:
+        text:
+    package_size:
+      name: Package size
+      description: Optional package size, e.g. 500g or 1L.
+      required: false
+      selector:
+        text:
+    stock:
+      name: Stock
+      description: How many units of this product are currently on hand. Defaults to the mapping's current stock, or 0 for a brand-new mapping.
+      required: false
+      selector:
+        number:
+          min: 0
+          mode: box
+    low_stock_threshold:
+      name: Low stock threshold
+      description: When stock drops to or below this value, the product is auto-added to the linked shopping list. Defaults to the mapping's current threshold, or 0 for a brand-new mapping.
+      required: false
+      selector:
+        number:
+          min: 0
+          mode: box
+
+remove_mapping:
+  name: Remove mapping
+  description: Remove a barcode → product mapping from the cache.
+  fields:
+    barcode:
+      name: Barcode
+      description: The barcode/UPC to remove.
+      required: true
+      example: "5000112637922"
+      selector:
+        text:
+
+adjust_stock:
+  name: Adjust stock
+  description: Increment or decrement a product's stock by a fixed amount (e.g. from the card's +/- stepper). Clamped at a minimum of 0.
+  fields:
+    barcode:
+      name: Barcode
+      description: The barcode/UPC whose stock to adjust.
+      required: true
+      example: "5000112637922"
+      selector:
+        text:
+    delta:
+      name: Delta
+      description: Amount to add (positive) or remove (negative) from current stock.
+      required: true
+      example: -1
+      selector:
+        number:
+          min: -1000
+          max: 1000
+          mode: box
