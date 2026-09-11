@@ -124,33 +124,36 @@ class BoopBasketCard extends HTMLElement {
     });
   }
 
-_build() {
-  const card = document.createElement('ha-card');
-  card.header = 'BoopBasket';
-  card.style.padding = '1em';
+  _build() {
+    const card = document.createElement('ha-card');
+    card.header = 'BoopBasket';
+    //card.style.padding = '1em';
 
-  const inputContainer = document.createElement('div');
-  inputContainer.style.cssText = `
+    const cardRow = document.createElement('div');
+    cardRow.className = 'addRow';
+
+    const inputContainer = document.createElement('div');
+    inputContainer.style.cssText = `
     position: relative;
     width: 100%;
     margin-bottom: 1em;
   `;
 
-  // Plain <input>, not ha-textfield: ha-textfield is a Home Assistant
-  // custom element that only renders once its module has been lazy-loaded
-  // by the frontend, which isn't guaranteed on every dashboard/panel — an
-  // un-upgraded instance sits in the DOM with no shadow root and reports
-  // zero size everywhere. Same failure class as the ha-dialog/ha-button
-  // issue already worked around in boopbasket-camera.js.
-  this._barcodeField = document.createElement('input');
-  this._barcodeField.type = 'text';
-  this._barcodeField.placeholder = 'Scan or add barcode';
-  this._barcodeField.className = 'boopbasket-input';
-  this._barcodeField.style.paddingRight = '92px';
+    // Plain <input>, not ha-textfield: ha-textfield is a Home Assistant
+    // custom element that only renders once its module has been lazy-loaded
+    // by the frontend, which isn't guaranteed on every dashboard/panel — an
+    // un-upgraded instance sits in the DOM with no shadow root and reports
+    // zero size everywhere. Same failure class as the ha-dialog/ha-button
+    // issue already worked around in boopbasket-camera.js.
+    this._barcodeField = document.createElement('input');
+    this._barcodeField.type = 'text';
+    this._barcodeField.placeholder = 'Scan or add barcode';
+    this._barcodeField.className = 'boopbasket-input';
+    this._barcodeField.style.paddingRight = '92px';
 
-  const quickAddBtn = document.createElement('ha-icon-button');
-  quickAddBtn.title = 'Add';
-  quickAddBtn.style.cssText = `
+    const quickAddBtn = document.createElement('ha-icon-button');
+    quickAddBtn.title = 'Add';
+    quickAddBtn.style.cssText = `
     position: absolute;
     right: 52px;
     top: 50%;
@@ -159,14 +162,14 @@ _build() {
     pointer-events: auto;
     z-index: 1;
   `;
-  const plusIcon = document.createElement('ha-icon');
-  plusIcon.icon = 'mdi:plus';
-  quickAddBtn.appendChild(plusIcon);
-  quickAddBtn.addEventListener('click', () => this._addQuick());
+    const plusIcon = document.createElement('ha-icon');
+    plusIcon.icon = 'mdi:plus';
+    quickAddBtn.appendChild(plusIcon);
+    quickAddBtn.addEventListener('click', () => this._addQuick());
 
-  const scanBtn = document.createElement('ha-icon-button');
-  scanBtn.title = 'Scan';
-  scanBtn.style.cssText = `
+    const scanBtn = document.createElement('ha-icon-button');
+    scanBtn.title = 'Scan';
+    scanBtn.style.cssText = `
     position: absolute;
     right: 12px;
     top: 50%;
@@ -175,60 +178,60 @@ _build() {
     pointer-events: auto;
     z-index: 1;
   `;
-  const cameraIcon = document.createElement('ha-icon');
-  cameraIcon.icon = 'mdi:camera';
-  scanBtn.appendChild(cameraIcon);
-  scanBtn.addEventListener('click', () => BoopBasketCamera.openScanner(this));
+    const cameraIcon = document.createElement('ha-icon');
+    cameraIcon.icon = 'mdi:camera';
+    scanBtn.appendChild(cameraIcon);
+    scanBtn.addEventListener('click', () => BoopBasketCamera.openScanner(this));
 
-  inputContainer.append(this._barcodeField, quickAddBtn, scanBtn);
+    inputContainer.append(this._barcodeField, quickAddBtn, scanBtn);
 
-  this._searchField = document.createElement('input');
-  this._searchField.type = 'text';
-  this._searchField.placeholder = 'Search barcode or product';
-  this._searchField.className = 'boopbasket-input';
-  this._searchField.style.marginBottom = '1em';
-  this._searchField.addEventListener('input', () => this._filterTable());
+    this._searchField = document.createElement('input');
+    this._searchField.type = 'text';
+    this._searchField.placeholder = 'Search barcode or product';
+    this._searchField.className = 'boopbasket-input';
+    this._searchField.style.marginBottom = '1em';
+    this._searchField.addEventListener('input', () => this._filterTable());
 
-  this._bulkActions = document.createElement('div');
-  this._bulkActions.style.cssText =
-    'display: flex; gap: 1em; margin-bottom: 1em; align-items: center;';
+    this._bulkActions = document.createElement('div');
+    this._bulkActions.style.cssText =
+      'display: flex; gap: 1em; margin-bottom: 1em; align-items: center;';
 
-  const bulkCount = document.createElement('span');
-  bulkCount.style.cssText = 'font-size: 0.9em; color: var(--secondary-text-color);';
-  bulkCount.textContent = '0 selected';
+    const bulkCount = document.createElement('span');
+    bulkCount.style.cssText = 'font-size: 0.9em; color: var(--secondary-text-color);';
+    bulkCount.textContent = '0 selected';
 
-  // BoopBasketUI.createButton(), not <ha-button>: see the note above on
-  // _barcodeField for why ha-* custom elements can't be relied on to
-  // render when assembled imperatively like this.
-  const bulkDeleteBtn = BoopBasketUI.createButton('Delete Selected', 'danger');
-  bulkDeleteBtn.id = 'bulk-delete';
-  bulkDeleteBtn.disabled = true;
+    // BoopBasketUI.createButton(), not <ha-button>: see the note above on
+    // _barcodeField for why ha-* custom elements can't be relied on to
+    // render when assembled imperatively like this.
+    const bulkDeleteBtn = BoopBasketUI.createButton('Delete Selected', 'danger');
+    bulkDeleteBtn.id = 'bulk-delete';
+    bulkDeleteBtn.disabled = true;
 
-  this._bulkActions.append(bulkCount, bulkDeleteBtn);
+    this._bulkActions.append(bulkCount, bulkDeleteBtn);
 
-  this._content = document.createElement('div');
-  this._content.className = 'barcode-table-wrapper';
-  this._content.innerHTML = '<p>Loading…</p>';
+    this._content = document.createElement('div');
+    this._content.className = 'barcode-table-wrapper';
+    this._content.innerHTML = '<p>Loading…</p>';
 
-  // ✅ Export button BELOW table
-  this._exportContainer = document.createElement('div');
-  this._exportContainer.style.cssText = `
+    // ✅ Export button BELOW table
+    this._exportContainer = document.createElement('div');
+    this._exportContainer.style.cssText = `
     display: flex;
     justify-content: center;
     margin-top: 1em;
     padding-top: 1em;
     border-top: 1px solid var(--divider-color);
   `;
-  const exportBtn = BoopBasketUI.createButton('📤 Export Data', 'primary');
-  exportBtn.addEventListener('click', () => this._exportData());
-  this._exportContainer.appendChild(exportBtn);
+    const exportBtn = BoopBasketUI.createButton('📤 Export Data', 'primary');
+    exportBtn.addEventListener('click', () => this._exportData());
+    this._exportContainer.appendChild(exportBtn);
+    cardRow.append(inputContainer, this._searchField, this._bulkActions, this._content, this._exportContainer);
+    card.append(cardRow);
+    this.innerHTML = '';
+    this.append(card);
 
-  card.append(inputContainer, this._searchField, this._bulkActions, this._content, this._exportContainer);
-  this.innerHTML = '';
-  this.append(card);
-
-  this._initStyles();
-}
+    this._initStyles();
+  }
 
 
 
@@ -399,7 +402,7 @@ _build() {
         suggestedData = lookup;
         showAutoFill = true;
       }
-    } catch {}
+    } catch { }
 
     // Pre-fill with this barcode's current stock (+1, since scanning/
     // adding means restocking) if it's already mapped, or start at 1 for
@@ -666,7 +669,7 @@ _build() {
     );
   }
 
-  setConfig() {}
+  setConfig() { }
   getCardSize() {
     return 8;
   }

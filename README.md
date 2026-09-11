@@ -2,9 +2,7 @@
 
 **Scan barcodes to track what's in your pantry.**
 
-> **Upgrading from BeepBasket?** This is a rename/merge of the old `beepbasket-card` (Lovelace plugin) + `beepbasket` (integration) pair into one package. `type: custom:beepbasket-card` in your dashboards must become `type: custom:boopbasket-card`, and you'll need to remove the old integration/manual Lovelace resource and set this one up fresh (Home Assistant integration domains can't be renamed in place, so there's no automatic migration — your existing `barcode_cache.json` mappings are not carried over automatically, but you can copy that file into the new integration's folder if you want to keep them).
-
-> **Upgrading from a pre-2.0 BoopBasket (the shopping-list-assistant version)?** BoopBasket is now a pantry/inventory monitor instead — it tracks how much of something you have on hand, not what you need to buy. Existing mappings keep working: their old "needed quantity" is read as a starting stock count the first time you touch them again, no data is lost. The `boopbasket.add_mapping` service's `quantity`/`add_to_list` fields were replaced by `stock`/`low_stock_threshold` — update any automations that called it directly.
+This is forked and (hopefully) improved version of [meijerwynand/beepbasket](https://github.com/meijerwynand/beepbasket). Thanks to him for the inspiration and base code.
 
 ## Features
 
@@ -32,7 +30,7 @@
 
 ## Services
 
-```
+```bash
 boopbasket.add_mapping     # add/update a barcode → product mapping, including its stock and low-stock threshold
 boopbasket.adjust_stock    # increment/decrement a product's stock by a given amount
 boopbasket.remove_mapping  # remove a barcode → product mapping

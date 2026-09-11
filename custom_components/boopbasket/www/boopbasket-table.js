@@ -21,10 +21,10 @@ window.BoopBasketTable = {
           </colgroup>
           <thead>
             <tr>
-              <th style="width: 48px;"><ha-checkbox id="select-all"></ha-checkbox></th>
-              <th>Product</th>
+              <th style="width: 48px;text-align: left;"><ha-checkbox id="select-all"></ha-checkbox></th>
+              <th style="text-align: left;>Product</th>
               <th style="text-align: center; width: 88px;">Stock</th>
-              <th style="text-align: right; min-width: 100px;">Actions</th>
+              <th style="text-align: center; min-width: 100px;">Actions</th>
             </tr>
           </thead>
           <tbody>`;
