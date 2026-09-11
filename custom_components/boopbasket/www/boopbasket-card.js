@@ -300,18 +300,31 @@ class BoopBasketCard extends HTMLElement {
         .barcode-table col:nth-child(4) { width: 96px; }
       }
 
+      /* Emulates <ha-input appearance="material">: a classic Material
+         "filled" text field — rounded top corners, a subtle fill, and a
+         bottom underline that thickens/colors on focus, rather than a
+         fully bordered box. Real <ha-input> isn't used directly (same
+         reliability reason as ha-textfield above: it may not be upgraded
+         yet on every dashboard), but these are the actual CSS custom
+         properties HA's own Material-styled form fields read, so this
+         tracks the active theme (including dark mode / custom themes). */
       .boopbasket-input {
         box-sizing: border-box;
         width: 100%;
-        height: 44px;
-        padding: 0 12px;
-        font-size: 0.95em;
+        height: 56px;
+        padding: 0 16px;
+        font-size: 16px;
         font-family: inherit;
         color: var(--primary-text-color, #000);
-        background: var(--card-background-color, #fff);
-        border: 1px solid var(--outline-color, var(--divider-color, #e0e0e0));
-        border-radius: 8px;
-        transition: border-color 150ms ease, box-shadow 150ms ease;
+        background: var(--mdc-text-field-fill-color, var(--secondary-background-color, rgba(0, 0, 0, 0.06)));
+        border: none;
+        border-radius: 4px 4px 0 0;
+        /* An inset box-shadow (not a real border) draws the underline, so
+           thickening it from 1px idle to 2px focused never shifts the
+           border-box's content area the way an actual border-width change
+           would. */
+        box-shadow: inset 0 -1px 0 0 var(--mdc-text-field-idle-line-color, var(--divider-color, rgba(0, 0, 0, 0.42)));
+        transition: box-shadow 150ms ease;
       }
 
       .boopbasket-input::placeholder {
@@ -319,13 +332,12 @@ class BoopBasketCard extends HTMLElement {
       }
 
       .boopbasket-input:hover {
-        border-color: var(--primary-text-color, #333);
+        box-shadow: inset 0 -1px 0 0 var(--mdc-text-field-hover-line-color, var(--primary-text-color, #333));
       }
 
       .boopbasket-input:focus {
         outline: none;
-        border-color: var(--primary-color, #03a9f4);
-        box-shadow: 0 0 0 1px var(--primary-color, #03a9f4);
+        box-shadow: inset 0 -2px 0 0 var(--mdc-theme-primary, var(--primary-color, #03a9f4));
       }
     `;
     document.head.appendChild(style);
