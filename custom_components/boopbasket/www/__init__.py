@@ -28,7 +28,7 @@ CARD_FILENAME = "boopbasket-card.js"
 # Bumped by hand in lockstep with BoopBasketCard.MODULE_VERSION in
 # boopbasket-card.js whenever any www/*.js file changes — this is what
 # actually busts the frontend's cache of the main card script.
-CARD_VERSION = "1.0.0"
+CARD_VERSION = "1.0.5"
 
 
 class BoopBasketFrontendRegistration:
