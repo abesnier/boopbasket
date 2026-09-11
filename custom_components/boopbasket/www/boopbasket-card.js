@@ -152,16 +152,21 @@ class BoopBasketCard extends HTMLElement {
     this._barcodeField.type = 'text';
     this._barcodeField.placeholder = 'Scan or add barcode';
     this._barcodeField.className = 'boopbasket-input';
-    this._barcodeField.style.paddingRight = '92px';
+    this._barcodeField.style.paddingRight = '72px';
 
+    // Both icon buttons emulate an <ha-input>/<wa-input>-style "end" slot:
+    // small, right-aligned, vertically centered inside the field. Sized to
+    // match the icon buttons used elsewhere in the card (table row actions,
+    // stock stepper) rather than HA's default 48px touch target, which
+    // would overwhelm a compact field like this one.
     const quickAddBtn = document.createElement('ha-icon-button');
     quickAddBtn.title = 'Add';
     quickAddBtn.style.cssText = `
     position: absolute;
-    right: 52px;
+    right: 36px;
     top: 50%;
     transform: translateY(-50%);
-    --mdc-icon-button-size: 32px;
+    --mdc-icon-button-size: 28px;
     pointer-events: auto;
     z-index: 1;
   `;
@@ -174,10 +179,10 @@ class BoopBasketCard extends HTMLElement {
     scanBtn.title = 'Scan';
     scanBtn.style.cssText = `
     position: absolute;
-    right: 12px;
+    right: 4px;
     top: 50%;
     transform: translateY(-50%);
-    --mdc-icon-button-size: 32px;
+    --mdc-icon-button-size: 28px;
     pointer-events: auto;
     z-index: 1;
   `;
@@ -298,19 +303,29 @@ class BoopBasketCard extends HTMLElement {
       .boopbasket-input {
         box-sizing: border-box;
         width: 100%;
-        height: 56px;
-        padding: 16px;
-        font-size: 1em;
+        height: 44px;
+        padding: 0 12px;
+        font-size: 0.95em;
         font-family: inherit;
         color: var(--primary-text-color, #000);
         background: var(--card-background-color, #fff);
-        border: 1px solid var(--divider-color, #e0e0e0);
-        border-radius: 4px;
+        border: 1px solid var(--outline-color, var(--divider-color, #e0e0e0));
+        border-radius: 8px;
+        transition: border-color 150ms ease, box-shadow 150ms ease;
+      }
+
+      .boopbasket-input::placeholder {
+        color: var(--secondary-text-color);
+      }
+
+      .boopbasket-input:hover {
+        border-color: var(--primary-text-color, #333);
       }
 
       .boopbasket-input:focus {
         outline: none;
         border-color: var(--primary-color, #03a9f4);
+        box-shadow: 0 0 0 1px var(--primary-color, #03a9f4);
       }
     `;
     document.head.appendChild(style);
