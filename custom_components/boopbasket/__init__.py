@@ -228,19 +228,23 @@ async def get_cache_path(hass: HomeAssistant) -> str:
 
 async def lookup_product(hass: HomeAssistant, barcode: str) -> Optional[Dict[str, Any]]:
     """Robust OpenFoodFacts lookup returning structured data."""
-    url = f"https://world.openfoodfacts.org/api/v0/product/{barcode}.json"
+    url = f"https://world.openfoodfacts.org/api/v3.6/product/{barcode}.json"
     timeout = aiohttp.ClientTimeout(total=10)
 
     try:
         async with aiohttp.ClientSession(timeout=timeout) as session:
             async with session.get(url) as resp:
+                # v3.6 responds 404 (not 200-with-status:0 like the legacy
+                # v0 API) for a barcode it doesn't know, so this already
+                # covers "not found" — the status field check below is just
+                # defense in depth for any other non-success response shape.
                 if resp.status != 200:
-                    _LOGGER.warning("Lookup failed, HTTP %s for %s", resp.status, barcode)
+                    _LOGGER.debug("Lookup: HTTP %s for %s", resp.status, barcode)
                     return None
 
                 data = await resp.json()
 
-                if data.get("status") != 1:
+                if data.get("status") != "success":
                     _LOGGER.debug("Product not found: %s", barcode)
                     return None
 

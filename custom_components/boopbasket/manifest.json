@@ -1,7 +1,7 @@
 {
   "domain": "boopbasket",
   "name": "Boopbasket",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "config_flow": true,
   "services": ["services.yaml"],
   "documentation": "https://github.com/abesnier/boopbasket",
