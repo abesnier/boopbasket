@@ -130,7 +130,10 @@ class BoopBasketCard extends HTMLElement {
     //card.style.padding = '1em';
 
     const cardRow = document.createElement('div');
-    cardRow.className = 'addRow';
+    cardRow.style.paddingLeft = '16px';
+    cardRow.style.paddingRight = '16px';
+    cardRow.style.paddingBottom = '0px';
+    cardRow.style.paddingTop = '16px';
 
     const inputContainer = document.createElement('div');
     inputContainer.style.cssText = `
@@ -232,8 +235,6 @@ class BoopBasketCard extends HTMLElement {
 
     this._initStyles();
   }
-
-
 
   _initStyles() {
     if (document.getElementById('barcode-final')) return;
