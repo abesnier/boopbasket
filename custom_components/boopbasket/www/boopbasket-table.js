@@ -15,7 +15,7 @@ window.BoopBasketTable = {
         <table class="barcode-table" style="width: 100%; border-collapse: collapse;">
           <colgroup>
             <col style="width: 48px;">
-            <col style="width: 1fr;">
+            <col>
             <col style="width: 88px;">
             <col style="width: 120px;">
           </colgroup>
