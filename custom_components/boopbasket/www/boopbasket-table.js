@@ -22,7 +22,7 @@ window.BoopBasketTable = {
           <thead>
             <tr>
               <th style="width: 48px;text-align: left;"><ha-checkbox id="select-all"></ha-checkbox></th>
-              <th style="text-align: left;>Product</th>
+              <th style="text-align: left;">Product</th>
               <th style="text-align: center; width: 88px;">Stock</th>
               <th style="text-align: center; min-width: 100px;">Actions</th>
             </tr>

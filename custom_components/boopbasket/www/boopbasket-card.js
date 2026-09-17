@@ -690,6 +690,6 @@ class BoopBasketCard extends HTMLElement {
 
 // Cache-bust query param for the lazily-loaded sub-scripts (see
 // _loadModules) — bump this whenever boopbasket-camera/table/ui.js change.
-BoopBasketCard.MODULE_VERSION = '1.0.6';
+BoopBasketCard.MODULE_VERSION = '1.0.7';
 
 customElements.define('boopbasket-card', BoopBasketCard);
