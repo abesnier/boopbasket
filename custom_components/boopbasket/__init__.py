@@ -1,4 +1,6 @@
 import logging
+import os
+import shutil
 import aiohttp
 import asyncio
 import json
@@ -222,9 +224,27 @@ def is_valid_barcode(code: str) -> bool:
         return False
     return True
 
+def _migrate_cache_path(old_path: str, new_path: str) -> None:
+    """One-time move from the old (unsafe) location to the new one. Runs
+    every startup but is a no-op once migrated, or for a fresh install
+    that never had the old file."""
+    if os.path.exists(new_path) or not os.path.exists(old_path):
+        return
+    os.makedirs(os.path.dirname(new_path), exist_ok=True)
+    shutil.move(old_path, new_path)
+    _LOGGER.info("📂 Migrated barcode cache from %s to %s", old_path, new_path)
+
 async def get_cache_path(hass: HomeAssistant) -> str:
-    """HA-standard: custom_components/boopbasket/barcode_cache.json"""
-    return hass.config.path(f"custom_components/{DOMAIN}/barcode_cache.json")
+    """<config>/boopbasket/barcode_cache.json — deliberately NOT inside
+    custom_components/boopbasket/. HACS deletes and fully re-extracts
+    that whole directory on every update, which would otherwise silently
+    wipe this file (the integration's only persistent data) along with
+    it. Migrates any existing file from the old, unsafe location the
+    first time this runs after upgrading past this change."""
+    new_path = hass.config.path(DOMAIN, "barcode_cache.json")
+    old_path = hass.config.path(f"custom_components/{DOMAIN}/barcode_cache.json")
+    await hass.async_add_executor_job(_migrate_cache_path, old_path, new_path)
+    return new_path
 
 async def lookup_product(hass: HomeAssistant, barcode: str) -> Optional[Dict[str, Any]]:
     """Robust OpenFoodFacts lookup returning structured data."""

@@ -64,6 +64,10 @@ Scan directly from your device to restock. You do need HTTPS for your camera to 
 
 ![BoopBasket Camera](screenshots/camera.png)
 
+## Data & backups
+
+All your scanned products (name, stock, low-stock threshold, etc.) live in a single file: `<config>/boopbasket/barcode_cache.json` — a dedicated folder directly under your Home Assistant config directory, *not* inside `custom_components/boopbasket/`. That's deliberate: HACS deletes and fully re-extracts the whole `custom_components/boopbasket/` folder on every update, so anything stored inside it would be wiped on every upgrade. If you're upgrading from a version before this change, your existing data is migrated automatically the first time the new version starts — but since HACS's update itself replaces `custom_components/boopbasket/` *before* the new code (and its migration) ever runs, that one specific transition update can still wipe the file. Back up `custom_components/boopbasket/barcode_cache.json` before updating past that point; every update after that is safe automatically.
+
 ## External barcode scanner support
 
 The example below shows an ESPHome config for a TTL barcode scanner (R35C-B with an ESP32-S2-mini) exposing scanned barcodes as a text sensor in Home Assistant. Point the integration's **stock-in** or **stock-out** entity (set from its Configure screen) at whichever entity you expose this way — e.g. mount it near the pantry shelf and assign it as stock-in to auto-restock, or near a bin and assign it as stock-out to auto-decrement as you toss empty packaging.
