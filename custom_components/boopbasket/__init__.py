@@ -225,12 +225,16 @@ def is_valid_barcode(code: str) -> bool:
     return True
 
 def _migrate_cache_path(old_path: str, new_path: str) -> None:
-    """One-time move from the old (unsafe) location to the new one. Runs
-    every startup but is a no-op once migrated, or for a fresh install
-    that never had the old file."""
+    """Ensures the new directory exists (aiofiles.open('w', ...) doesn't
+    create missing parent directories, so without this the very first
+    write — e.g. the first add_mapping call — fails with ENOENT on a
+    fresh install), then does a one-time move from the old (unsafe)
+    location if there's anything there to migrate. Runs every startup but
+    is a no-op past the first one, or for a fresh install that never had
+    the old file."""
+    os.makedirs(os.path.dirname(new_path), exist_ok=True)
     if os.path.exists(new_path) or not os.path.exists(old_path):
         return
-    os.makedirs(os.path.dirname(new_path), exist_ok=True)
     shutil.move(old_path, new_path)
     _LOGGER.info("📂 Migrated barcode cache from %s to %s", old_path, new_path)
 
